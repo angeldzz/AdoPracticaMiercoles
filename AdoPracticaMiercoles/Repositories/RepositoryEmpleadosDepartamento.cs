@@ -60,18 +60,22 @@ exec SP_UPDATE_EMPLEADO 7782,'PINTO','GERENTE',300000
             this.com = new SqlCommand();
             this.com.Connection = this.cn;
         }
-        public async Task<List<string>> GetDepartamentos()
+        public async Task<List<Departamento>> GetDepartamentos()
         {
             string sql = "SP_ALL_DEPARTAMENTOS";
             this.com.CommandType = CommandType.StoredProcedure;
             this.com.CommandText = sql;
             await this.cn.OpenAsync();
             this.reader = await this.com.ExecuteReaderAsync();
-            List<string> departamentos = new List<string>();
+            List<Departamento> departamentos = new List<Departamento>();
             while (await this.reader.ReadAsync())
             {
+                Departamento dept = new Departamento();
                 string nombre = this.reader["DNOMBRE"].ToString();
-                departamentos.Add(nombre);
+                string localidad = this.reader["LOC"].ToString();
+                dept.DeptNombre = nombre;
+                dept.DeptLocalidad = localidad;
+                departamentos.Add(dept);
             }
             await this.cn.CloseAsync();
             await this.reader.CloseAsync();

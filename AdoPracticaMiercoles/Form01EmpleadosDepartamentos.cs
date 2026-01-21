@@ -17,15 +17,18 @@ namespace AdoPracticaMiercoles
         private async Task LoadDepartamentos()
         {
             this.cmbDepartamentos.Items.Clear();
-            List<string> departamentos = await this.repo.GetDepartamentos();
-            foreach (string dept in departamentos)
+            List<Departamento> departamentos = await this.repo.GetDepartamentos();
+            foreach (Departamento dept in departamentos)
             {
-                this.cmbDepartamentos.Items.Add(dept);
+                this.cmbDepartamentos.Items.Add(dept.DeptNombre+" - "+dept.DeptLocalidad);
             }
         }
         private async void cmbDepartamentos_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string DeptNombre = this.cmbDepartamentos.SelectedItem.ToString();
+            string DeptNombre = this.cmbDepartamentos.SelectedItem.ToString().Split(" - ")[0];
+            string Localidad = this.cmbDepartamentos.SelectedItem.ToString().Split(" - ")[1];
+            this.txtDeptNombre.Text = DeptNombre;
+            this.txtDeptLocalidad.Text = Localidad;
             this.lstEmpleados.Items.Clear();
             List<Empleados> empleados = await this.repo.GetEmpleadosDepartamento(DeptNombre);
             foreach (Empleados emp in empleados)
@@ -58,10 +61,9 @@ namespace AdoPracticaMiercoles
         {
             if (this.lstEmpleados.SelectedItem == null) return;
 
-            string nombre = this.cmbDepartamentos.SelectedItem.ToString();
-            List<Empleados> empleados = await this.repo.GetEmpleadosDepartamento(nombre);
+            string nombreDEPT = this.cmbDepartamentos.SelectedItem.ToString().Split(" - ")[0];
+            List<Empleados> empleados = await this.repo.GetEmpleadosDepartamento(nombreDEPT);
 
-            // Extract the employee ID from the formatted string
             string textLista = this.lstEmpleados.SelectedItem.ToString();
             int idEmpleado = int.Parse(textLista.Split(" - ")[0]);
 
